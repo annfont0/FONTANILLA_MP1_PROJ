@@ -2,9 +2,10 @@
 export default {
   data() {
     return {
-      symbol: new Array(9).fill(null),
+      entries: new Array(9).fill(null),
       state: false,
       win: [],
+      message: "X TURN",
     };
   },
   methods: {
@@ -13,9 +14,9 @@ export default {
     },
     play(num) {
       if (!this.state) {
-        this.symbol[num] = "X";
+        this.entries[num] = "X";
       } else {
-        this.symbol[num] = "O";
+        this.entries[num] = "O";
       }
       this.state = !this.state;
 
@@ -30,25 +31,29 @@ export default {
         [2, 4, 6],
       ];
 
+      if (
+        this.entries.length === 9 &&
+        this.win.length === 0 &&
+        this.entries.every((n) => n !== null)
+      ) {
+        this.message = `IT'S A TIE`;
+      } else {
+        this.message = `${this.state ? "O" : "X"} TURN`;
+      }
+
       for (const combination of combinations) {
         const [a, b, c] = combination;
 
         if (
-          this.symbol[a] === this.symbol[b] &&
-          this.symbol[b] === this.symbol[c] &&
-          this.symbol[a] !== null &&
-          this.symbol[b] !== null &&
-          this.symbol[c] !== null
+          this.entries[a] === this.entries[b] &&
+          this.entries[b] === this.entries[c] &&
+          this.entries[a] !== null &&
+          this.entries[b] !== null &&
+          this.entries[c] !== null
         ) {
           this.win = combination;
+          this.message = `${this.entries[a]} WINS`;
         }
-      }
-
-      if (
-        this.symbol.length === 9 &&
-        this.symbol.every((n) => n !== null && this.win === "")
-      ) {
-        this.win = null;
       }
     },
   },
@@ -57,33 +62,32 @@ export default {
 
 <template>
   <main>
-    <h1>TIC TAC TOE</h1>
     <h4>
-      {{
-        win.length === 0
-          ? (state ? "O" : "X") + " turn!"
-          : symbol[win[0]] + " wins!"
-      }}
+      {{ message }}
     </h4>
     <div class="game">
-      <div v-for="row in 3" :key="row" class="row">
+      <div v-for="row in 3" class="row">
         <button
           v-for="col in 3"
-          :key="col"
           class="tile"
           @click="play((row - 1) * 3 + (col - 1))"
           :disabled="
-            symbol[(row - 1) * 3 + (col - 1)] !== null || win.length !== 0
+            entries[(row - 1) * 3 + (col - 1)] !== null || win.length !== 0
           "
           :style="{
+            backgroundColor:
+              win[row - 1] === (row - 1) * 3 + (col - 1) ||
+              win[col - 1] === (row - 1) * 3 + (col - 1)
+                ? 'rgb(110, 213, 110)'
+                : '',
             color:
               win[row - 1] === (row - 1) * 3 + (col - 1) ||
               win[col - 1] === (row - 1) * 3 + (col - 1)
-                ? 'green'
+                ? 'white'
                 : '',
           }"
         >
-          {{ symbol[(row - 1) * 3 + (col - 1)] || "\u00A0" }}
+          {{ entries[(row - 1) * 3 + (col - 1)] || "\u00A0" }}
         </button>
       </div>
     </div>
@@ -111,8 +115,11 @@ main {
 .tile {
   width: 7rem;
   font-size: 5rem;
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   border: 0;
+}
+.tile:disabled {
+  color: rgb(57, 51, 51);
 }
 .restart {
   height: 2rem;
