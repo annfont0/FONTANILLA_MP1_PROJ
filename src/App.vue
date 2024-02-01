@@ -13,12 +13,22 @@ export default {
       location.reload();
     },
     play(num) {
-      if (!this.state) {
-        this.entries[num] = "X";
-      } else {
+      if (this.state) {
         this.entries[num] = "O";
+      } else {
+        this.entries[num] = "X";
       }
       this.state = !this.state;
+
+      if (
+        this.entries.length === 9 &&
+        this.win.length === 0 &&
+        this.entries.every((n) => n !== null)
+      ) {
+        this.message = `IT'S A TIE!`;
+      } else {
+        this.message = `${this.state ? "O" : "X"} TURN`;
+      }
 
       const combinations = [
         [0, 1, 2],
@@ -31,16 +41,6 @@ export default {
         [2, 4, 6],
       ];
 
-      if (
-        this.entries.length === 9 &&
-        this.win.length === 0 &&
-        this.entries.every((n) => n !== null)
-      ) {
-        this.message = `IT'S A TIE`;
-      } else {
-        this.message = `${this.state ? "O" : "X"} TURN`;
-      }
-
       for (const combination of combinations) {
         const [a, b, c] = combination;
 
@@ -52,7 +52,7 @@ export default {
           this.entries[c] !== null
         ) {
           this.win = combination;
-          this.message = `${this.entries[a]} WINS`;
+          this.message = `${this.entries[a]} WINS!`;
         }
       }
     },
@@ -62,9 +62,9 @@ export default {
 
 <template>
   <main>
-    <h4>
+    <h1>
       {{ message }}
-    </h4>
+    </h1>
     <div class="game">
       <div v-for="row in 3" class="row">
         <button
@@ -102,6 +102,9 @@ main {
   align-items: center;
   height: 100svh;
   justify-content: center;
+}
+h1 {
+  font-size: 3rem;
 }
 .game {
   background-color: black;
