@@ -1,4 +1,6 @@
 <script>
+import Swal from "sweetalert2";
+
 export default {
   data() {
     return {
@@ -26,6 +28,10 @@ export default {
         this.entries.every((n) => n !== null)
       ) {
         this.message = `IT'S A TIE!`;
+        Swal.fire({
+          icon: "warning",
+          title: `IT'S A TIE!`,
+        });
       } else {
         this.message = `${this.state ? "O" : "X"} TURN`;
       }
@@ -53,6 +59,10 @@ export default {
         ) {
           this.win = combination;
           this.message = `${this.entries[a]} WINS!`;
+          Swal.fire({
+            icon: "success",
+            title: `${this.entries[a]} WINS!`,
+          });
         }
       }
     },
@@ -91,7 +101,9 @@ export default {
         </button>
       </div>
     </div>
-    <button class="restart" @click="restart()">Restart</button>
+    <button class="restart" @click="restart()" v-if="win.length > 0">
+      Play Again
+    </button>
   </main>
 </template>
 
@@ -125,8 +137,17 @@ h1 {
   color: rgb(57, 51, 51);
 }
 .restart {
-  height: 2rem;
   font-size: 1rem;
   margin-top: 2rem;
+  background-color: rgb(28, 158, 56);
+  color: white;
+  border-radius: 5%;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.restart:hover {
+  scale: 1.1;
 }
 </style>
