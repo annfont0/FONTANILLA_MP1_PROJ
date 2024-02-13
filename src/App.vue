@@ -101,7 +101,11 @@ export default {
         </button>
       </div>
     </div>
-    <button class="restart" @click="restart()" v-if="win.length > 0">
+    <button
+      class="restart"
+      @click="restart()"
+      v-if="win.length > 0 || message === `IT'S A TIE!`"
+    >
       Play Again
     </button>
   </main>
